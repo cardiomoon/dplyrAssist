@@ -14,8 +14,7 @@ knitr::opts_chunk$set(echo = TRUE,comment = NA,fig.align='center',out.width="70%
 ```
 
 ```
-This package is for teaching and learning data manipulation using the 'dplyr' package.
-With this shiny app, you can learn each steps of data manipulation by clicking your mouse without coding. You can get resultant data(as a tibble) and the code for data manipulation. 
+The 'dplyrAssist' is an RStudio addin for teaching and learning data manipulation using the 'dplyr' package. You can learn each steps of data manipulation by clicking your mouse without coding. You can get resultant data(as a 'tibble') and the code for data manipulation. 
 ```
 
 ## Install package
@@ -27,14 +26,60 @@ You can install `dplyrAssist` package from github.
 devtools::install_github("cardiomoon/dplyrAssist")
 ```
 
-## The first example: Summarise Data 
-
-You can run dplyrAssist function with data name.
+## The First Example: Reshaping Data
 
 ```{r,message=FALSE}
 require(tidyverse)
 require(dplyrAssist)
 ```
+
+You can run dplyrAssist() function without data. 
+
+```{r,eval=FALSE}
+dplyrAssist()
+```
+
+Or you can run as an RStudio addin.
+
+```{r,echo=FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/cardiomoon/dplyrAssist/master/man/figures/0.png")
+```
+
+Bt default, tidyr::table1 data is displayed. Press `Show data structure` radio button(1) and you can see the data(2). 
+
+```{r,echo=FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/cardiomoon/dplyrAssist/master/man/figures/6.png")
+```
+
+You can reshape the data easily. Select "Reshaping Data"(1) and select "gather" function(2). You can see the plot explaining "gather"(3). Select `case` and `population`(4). Enter the key column name(5) and value column name(6). You can see the R code(7). Press `Add R code` button(8).
+
+```{r,echo=FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/cardiomoon/dplyrAssist/master/man/figures/7.png")
+```
+
+You can see the Data Wrangling R codes(1) and the result(2). 
+
+```{r,echo=FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/cardiomoon/dplyrAssist/master/man/figures/8.png")
+```
+
+The reverse prcoess of `gather` is `spread`. Now select `spread` function(2). You can see the plot explaining "spread"(3). Select `key` and `value` columns(4). You can see the R code(5). Press `Add R code` button(6).
+
+```{r,echo=FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/cardiomoon/dplyrAssist/master/man/figures/9.png")
+```
+
+You can see the Data Wrangling R codes(1) and the result(2). 
+
+```{r,echo=FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/cardiomoon/dplyrAssist/master/man/figures/10.png")
+```
+
+
+## The 2nd example: Summarise Data 
+
+You can run dplyrAssist function with data name.
+
 ```{r,echo=TRUE,eval=FALSE}
 result <- dplyrAssist(iris)
 ```
@@ -91,42 +136,6 @@ attr(result,"code") <- "iris %>%\n group_by(Species) %>%\n summarise_all(mean)"
 ```
 
 
-## The 2nd Example: Reshaping Data
-
-You can run dplyrAssist() function without data. 
-
-```{r,eval=FALSE}
-dplyrAssist()
-```
-Bt default, tidyr::table1 data is displayed. Press `Show data structure` radio button(1) and you can see the data(2). 
-
-```{r,echo=FALSE}
-knitr::include_graphics("https://raw.githubusercontent.com/cardiomoon/dplyrAssist/master/man/figures/6.png")
-```
-
-You can reshape the data easily. Select "Reshaping Data"(1) and select "gather" function(2). You can see the plot explaining "gather"(3). Select `case` and `population`(4). Enter the key column name(5) and value column name(6). You can see the R code(7). Press `Add R code` button(8).
-
-```{r,echo=FALSE}
-knitr::include_graphics("https://raw.githubusercontent.com/cardiomoon/dplyrAssist/master/man/figures/7.png")
-```
-
-You can see the Data Wrangling R codes(1) and the result(2). 
-
-```{r,echo=FALSE}
-knitr::include_graphics("https://raw.githubusercontent.com/cardiomoon/dplyrAssist/master/man/figures/8.png")
-```
-
-The reverse prcoess of `gather` is `spread`. Now select `spread` function(2). You can see the plot explaining "spread"(3). Select `key` and `value` columns(4). You can see the R code(5). Press `Add R code` button(6).
-
-```{r,echo=FALSE}
-knitr::include_graphics("https://raw.githubusercontent.com/cardiomoon/dplyrAssist/master/man/figures/9.png")
-```
-
-You can see the Data Wrangling R codes(1) and the result(2). 
-
-```{r,echo=FALSE}
-knitr::include_graphics("https://raw.githubusercontent.com/cardiomoon/dplyrAssist/master/man/figures/10.png")
-```
 
 ## The 3rd example : Combine the data sets
 
