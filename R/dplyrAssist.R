@@ -21,26 +21,19 @@
 #' @examples
 #' library(tidyverse)
 #' library(nycflights13)
-#' #mydplyr(band_members,band_instruments)
-#' #mydplyr(flights)
-#' #result<-mydplyr(iris)
+#' #dplyrAssist(band_members,band_instruments)
+#' #dplyrAssist(flights)
+#' #result<-dplyrAssist(iris)
 #' #cat(attr(result,"code"))
-mydplyr=function(df,right=NULL){
-    # library(shiny)
-    # library(shinyWidgets)
-    # library(shinyAce)
-    # library(tidyverse)
-    # library(nycflights13)
-    # library(stringr)
+dplyrAssist=function(df=NULL,right=NULL){
 
-    #source("textInput2.R")
-    #source("makeValidCode.R")
 
     selectInput3<-function(...,width=100){
         mywidth=paste(width,"px",sep="")
         div(style="display:inline-block;",selectInput(...,width=mywidth))
     }
 
+    if(is.null(df)) df="table1"
     if(any(class(df) %in% c("data.frame","tibble","tbl_df"))) mydata=deparse(substitute(df))
     else if(class(df) =="character") {
 
@@ -325,11 +318,15 @@ mydplyr=function(df,right=NULL){
                  for(i in 1:length(mynumeric)) updateTextInput(session,mynumeric[i],value="")
                  mycheck=c("na.rm","convert","desc")
                  for(i in 1:length(mycheck)) updateCheckboxInput(session,mynumeric[i],value=FALSE)
+                 if(input$dfunction=="separate"){
+                      updateSelectInput("extra","extra",choices=c("warn","drop","merge"),selected="warn")
+                      updateSelectInput("fill","fill",choices=c("warn","right","left"),selected="warn")
+                 }
+                 if(input$dfunction=="fill") updateSelectInput("direction","direction",choices=c("down","up"),selected="down")
+
                  myselect=c("dfunction","helper","window","picker1","picker2")
                  for(i in 1:length(mycheck)) updateSelectInput(session,myselect[i],selected="")
-                 updateSelectInput("extra","extra",choices=c("warn","drop","merge"),selected="warn")
-                 updateSelectInput("fill","fill",choices=c("warn","right","left"),selected="warn")
-                 updateSelectInput("direction","direction",choices=c("down","up"),selected="down")
+
 
                 updateAceEditor(session,"Rcode",1)
             })
@@ -494,7 +491,11 @@ mydplyr=function(df,right=NULL){
                         else ret=paste0(ret,choices)
 
                     }
-
+                    if(input$dfunction=="count"){
+                         if(!is.null(input$wt)) {
+                              if(input$wt!="") ret=paste0(ret,",wt=",input$wt)
+                         }
+                    }
 
 
                     if(input$dfunction=="ggplot") ret=paste0(ret,")")
@@ -614,6 +615,10 @@ mydplyr=function(df,right=NULL){
                         if(input$dfunction=="separate") selectInput3("extra","extra",choices=c("warn","drop","merge")),
                         if(input$dfunction=="separate") selectInput3("fill","fill",choices=c("warn","right","left")),
                         if(input$dfunction=="arrange") checkboxInput("desc","descending order"),
+                        if(input$dfunction=="count")
+                             selectInput3("wt","wt",choices=c("",colnames(data))),
+
+
                         if(input$dfunction %in% c("unite","rename")) textInput("col","new column name"),
                         if(input$dfunction=="unite") textInput("sep2","sep",value="_"),
                         if(input$dfunction=="fill") selectInput("direction","direction",choices=c("down","up")),
@@ -745,6 +750,10 @@ mydplyr=function(df,right=NULL){
                 temp=paste0(temp,")")
                 updateAceEditor(session,"Rcode",value=temp)
 
+            })
+            observeEvent(input$wt,{
+                 temp=makeRcode()
+                 updateAceEditor(session,"Rcode",value=temp)
             })
 
             output$result1=renderPrint({
