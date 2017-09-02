@@ -42,7 +42,7 @@ dplyrAssist()
 Or you can run as an RStudio addin.
 
 ```{r,echo=FALSE}
-knitr::include_graphics("https://raw.githubusercontent.com/cardiomoon/dplyrAssist/master/man/figures/0.png")
+knitr::include_graphics("https://github.com/cardiomoon/dplyrAssist/blob/master/man/figures/0.png?raw=true")
 ```
 
 Bt default, tidyr::table1 data is displayed. Press `Show data structure` radio button(1) and you can see the data(2). 
