@@ -18,8 +18,10 @@ A manipulated tibble or NULL
 A shiny app for learn dplyr
 }
 \examples{
-mydplyr(band_members,band_instruments)
-mydplyr(flights)
-result<-mydplyr(iris)
-atr(attr(result,"code"))
+library(tidyverse)
+library(nycflights13)
+#mydplyr(band_members,band_instruments)
+#mydplyr(flights)
+#result<-mydplyr(iris)
+#cat(attr(result,"code"))
 }

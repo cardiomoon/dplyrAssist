@@ -1,18 +1,18 @@
-require(tidyverse)
-require(stringr)
+# require(tidyverse)
+# require(stringr)
 
 #' Check the validity of code
-#' 
+#'
 #'@param temp A character string to check validity
 checkInValid=function(temp){
     res=c()
-    
+
     for(i in 1:length(temp)){
          result<-c()
          result<-tryCatch(eval(parse(text=temp[i])),
                           error=function(e) return("error"),
                           warning=function(w) return("warning"))
-         
+
          if(!is.null(result)){
              if(identical(result,"error")){
                 res=i
@@ -24,7 +24,7 @@ checkInValid=function(temp){
 }
 
 #' Make valid R code
-#' 
+#'
 #' @param temp A character vector to make a valid code
 makeValid=function(temp){
    no=checkInValid(temp)
@@ -34,29 +34,29 @@ makeValid=function(temp){
        if(no>1) result=temp[1:(no-1)]
        if(no<length(temp)) result=c(result,paste0(temp[no],temp[no+1]))
        if(no<(length(temp)-1)) result=c(result,temp[(no+2):length(temp)])
-       
+
        (temp=result)
        if(!is.null(temp)) result=makeValid(temp)
    } else{
        result=temp
    }
    result
-}    
+}
 
 
 #' Make valid R code
-#' 
+#'
 #' @param codes A character vector to make a valid code
 makeValidCode=function(codes){
     temp=unlist(stringr::str_split(codes,"\n"))
-    temp=temp[nchar(temp)>0] 
+    temp=temp[nchar(temp)>0]
     temp
     makeValid(temp)
 }
 
 
 #' Differentiate the R code
-#' 
+#'
 #' @param vcodes A character vector to differentiate
 codes2kind=function(vcodes){
     result=c()
@@ -76,7 +76,7 @@ codes2kind=function(vcodes){
 
 
 #' Detect the valid data
-#' 
+#'
 #' @param codes A character vector to detect
 findData=function(codes){
     result=NULL

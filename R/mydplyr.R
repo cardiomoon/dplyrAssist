@@ -4,22 +4,34 @@
 #' @param right Optional second data(A tibble or a tbl_df or a data.frame) to join
 #'
 #' @return A manipulated tibble or NULL
-#' @importFrom shiny div selectInput runApp fluidPage tags HTML titlePanel hr
-#' @importFrom magrittr %>%
+#' @importFrom shiny div selectInput runApp fluidPage tags HTML titlePanel hr fluidRow column
+#' @importFrom shiny textInput checkboxInput numericInput conditionalPanel verbatimTextOutput uiOutput h3 actionButton
+#' @importFrom shiny validate need renderPrint updateTextInput updateCheckboxInput reactive renderPlot
+#' @importFrom shiny updateSelectizeInput renderUI htmlOutput tagList updateNumericInput updateSelectInput imageOutput
+#' @importFrom shiny observe br observeEvent renderImage stopApp plotOutput
+#' @importFrom shinyWidgets radioGroupButtons materialSwitch pickerInput
+#' @importFrom shinyAce aceEditor updateAceEditor
+#' @importFrom stringr str_detect str_replace str_c str_replace_all str_split str_replace
+#' @importFrom DT renderDataTable dataTableOutput
+#' @importFrom utils capture.output
+#' @importFrom magrittr "%>%"
+#' @importFrom plyr "."
 #' @export
 #'
 #' @examples
-#' mydplyr(band_members,band_instruments)
-#' mydplyr(flights)
-#' result<-mydplyr(iris)
-#' atr(attr(result,"code"))
+#' library(tidyverse)
+#' library(nycflights13)
+#' #mydplyr(band_members,band_instruments)
+#' #mydplyr(flights)
+#' #result<-mydplyr(iris)
+#' #cat(attr(result,"code"))
 mydplyr=function(df,right=NULL){
-    library(shiny)
-    library(shinyWidgets)
-    library(shinyAce)
-    library(tidyverse)
-    library(nycflights13)
-    library(stringr)
+    # library(shiny)
+    # library(shinyWidgets)
+    # library(shinyAce)
+    # library(tidyverse)
+    # library(nycflights13)
+    # library(stringr)
 
     #source("textInput2.R")
     #source("makeValidCode.R")
@@ -62,8 +74,8 @@ mydplyr=function(df,right=NULL){
             # Application title
             titlePanel("Data Wrangling using tidyverse"),
             hr(),
-            h5("      presented by cardiomoon@gmail.com"),
-            hr(),
+            # h5("      presented by cardiomoon@gmail.com"),
+            # hr(),
             # radioGroupButtons("radio1","Please Select Data or",
             #                   choices=c("flights","band_members","table1","table2","table3",
             #                             "table4a","table4b","table5","stocks","treatment","mpg","who","iris","excess"),
@@ -77,7 +89,7 @@ mydplyr=function(df,right=NULL){
                                          selected="No thanks"))),
             #materialSwitch("showData1","Show Data",status="info"),
             conditionalPanel(condition="input.showOption=='data table'",
-                             DT::dataTableOutput("data1")),
+                             dataTableOutput("data1")),
             conditionalPanel(condition="input.showOption=='data structure'",
                              verbatimTextOutput("text")
             ),
@@ -133,8 +145,11 @@ mydplyr=function(df,right=NULL){
                                                                size=9,selectize=FALSE)
                                             )),
                            column(4,
-                                  selectInput("column","Select Column",
-                                              choices="",multiple=TRUE,selectize=FALSE,size=9)
+                                  selectInput("picker1","Select Columns",
+                                              choices="",selectize=FALSE,size=4),
+                                  selectInput("picker2","Selected Columns",
+                                              choices="",selectize=FALSE,size=4)
+                                  #,verbatimTextOutput("test1")
                            ),
                            # conditionalPanel(condition='input.operation=="Combine Data Sets"',
                            #                  column(4,selectInput("relatedData","related Data",
@@ -172,30 +187,30 @@ mydplyr=function(df,right=NULL){
                 ),
         server=function(input,output,session){
 
-            help_console <- function(topic, format=c("text", "html", "latex", "Rd"),
-                                     lines=NULL, before=NULL, after=NULL) {
-                format=match.arg(format)
-                if (!is.character(topic)) topic <- deparse(substitute(topic))
-                helpfile<-NULL
-                try(helpfile <- utils:::.getHelpFile(help(topic)))
-                if(is.null(helpfile)){
-                    cat("No help file about ",topic," is found")
-                } else {
-                    hs <- capture.output(switch(format,
-                                                text=tools:::Rd2txt(helpfile),
-                                                html=tools:::Rd2HTML(helpfile),
-                                                latex=tools:::Rd2latex(helpfile),
-                                                Rd=tools:::prepare_Rd(helpfile)
-                    )
-                    )
-                    if(!is.null(lines)) hs <- hs[lines]
-                    hs <- c(before, hs, after)
-                    cat(hs, sep="\n")
-                    invisible(hs)
-
-
-                }
-            }
+            # help_console <- function(topic, format=c("text", "html", "latex", "Rd"),
+            #                          lines=NULL, before=NULL, after=NULL) {
+            #     format=match.arg(format)
+            #     if (!is.character(topic)) topic <- deparse(substitute(topic))
+            #     helpfile<-NULL
+            #     try(helpfile <- utils:::.getHelpFile(help(topic)))
+            #     if(is.null(helpfile)){
+            #         cat("No help file about ",topic," is found")
+            #     } else {
+            #         hs <- capture.output(switch(format,
+            #                                     text=tools:::Rd2txt(helpfile),
+            #                                     html=tools:::Rd2HTML(helpfile),
+            #                                     latex=tools:::Rd2latex(helpfile),
+            #                                     Rd=tools:::prepare_Rd(helpfile)
+            #         )
+            #         )
+            #         if(!is.null(lines)) hs <- hs[lines]
+            #         hs <- c(before, hs, after)
+            #         cat(hs, sep="\n")
+            #         invisible(hs)
+            #
+            #
+            #     }
+            # }
 
             putmsg=function(msg="test message"){
                 session$sendCustomMessage(type = 'testmessage',message = list( msg))
@@ -207,26 +222,16 @@ mydplyr=function(df,right=NULL){
 
             }
 
+            selected=c()
+            data<-NULL
 
-            observe({
+            observeEvent(input$wrangling,{
 
-                #tryCatch(eval(parse(text=input$wrangling)),error=function(e){test(e)})
-                # validate(
-                #     need(any(class(try(eval(parse(text=input$mydata)))) %in% c("tbl_df","tibble","data.frame")),
-                #                                  "Please enter the name of data")
-                # )
-                #resetPlot()
-                #df<-eval(parse(text=input$mydata))
-
-                #values$data1<-input$mydata
-                #alldata<<-tryCatch(eval(parse(text=input$mydata)))
-                #tryCatch(eval(parse(text=input$wrangling)),error=function(e){test(e)})
-                # validate(
-                #     need(class(try(eval(parse(text=input$wrangling)))) %in% c("tibble","data.frame"),
-                #          "Please enter valid R code!")
-                # )
-                data<-findData(input$wrangling)
+                data<<-findData(input$wrangling)
                 if(!is.null(data)) updateSelectInput(session,"column",choices=colnames(data))
+                if(!is.null(data)) updateSelectInput(session,"picker1",choices=colnames(data))
+                if(!is.null(data)) updateSelectInput(session,"picker2",choices="")
+                selected<<-c()
             })
 
             # observeEvent(input$radio1,{
@@ -241,7 +246,12 @@ mydplyr=function(df,right=NULL){
                          "Please enter the name of data")
                 )
                 data1<-get(input$mydata)
-                updateSelectInput(session,"column",choices=colnames(data1))
+                if(!is.null(data1)) {
+                    updateSelectInput(session,"column",choices=colnames(data1))
+                    updateSelectInput(session,"picker1",choices=colnames(data1))
+                    updateSelectInput(session,"picker2",choices="")
+                    selected<<-c()
+                }
                 if(input$wrangling=="") {
                     updateAceEditor(session,"wrangling",value=input$mydata)
                 } else if(!str_detect(input$wrangling,"[^[A-Za-z0-9\\s\\_]]")) {
@@ -259,7 +269,6 @@ mydplyr=function(df,right=NULL){
                 #     choices2=c("population")
                 # } else choices2=""
                 # updateSelectInput(session,"relatedData",choices=choices2)
-
             })
 
 
@@ -275,12 +284,53 @@ mydplyr=function(df,right=NULL){
 
             })
 
+            observeEvent(input$picker1,{
+
+                 selected<<-c(selected,input$picker1)
+                 updateSelectInput(session,"picker1",choices=setdiff(colnames(data),selected))
+                 updateSelectInput(session,"picker2",choices=selected)
+
+            })
+
+            observeEvent(input$picker2,{
+                # if(!is.null(input$picker2)){
+                 selected<<-setdiff(selected,input$picker2)
+                 updateSelectInput(session,"picker1",choices=setdiff(colnames(data),selected))
+                 updateSelectInput(session,"picker2",choices=selected)
+                 #}
+            })
+
+            output$test1=renderPrint({
+
+                 input$picker1
+                 input$picker2
+                 input$mydata
+                 input$wrangling
+
+                 # cat("data\n")
+                 # str(data)
+                 cat("\nselected\n")
+                 selected
+            })
+
+
             observeEvent(input$reset,{
                 #updateSelectInput(session,"operation",selected="")
-                updateSelectInput(session,"dfunction",selected="")
-                updateSelectInput(session,"helper",selected="")
-                updateSelectInput(session,"window",selected="")
-                updateSelectInput(session,"column",selected="")
+
+                 mytext=c("key","value","into","col")
+                 for(i in 1:length(mytext)) updateTextInput(session,mytext[i],value="")
+                 updateTextInput(session,"sep",value="[^[:alnum:]]+")
+                 updateTextInput(session,"sep1",value="_")
+                 mynumeric=c("n")
+                 for(i in 1:length(mynumeric)) updateTextInput(session,mynumeric[i],value="")
+                 mycheck=c("na.rm","convert","desc")
+                 for(i in 1:length(mycheck)) updateCheckboxInput(session,mynumeric[i],value=FALSE)
+                 myselect=c("dfunction","helper","window","picker1","picker2")
+                 for(i in 1:length(mycheck)) updateSelectInput(session,myselect[i],selected="")
+                 updateSelectInput("extra","extra",choices=c("warn","drop","merge"),selected="warn")
+                 updateSelectInput("fill","fill",choices=c("warn","right","left"),selected="warn")
+                 updateSelectInput("direction","direction",choices=c("down","up"),selected="down")
+
                 updateAceEditor(session,"Rcode",1)
             })
 
@@ -294,8 +344,11 @@ mydplyr=function(df,right=NULL){
                 updateAceEditor(session,"Rcode",value=makeRcode())
             })
 
-            observeEvent(input$column,{
+            observeEvent(input$picker1,{
                 updateAceEditor(session,"Rcode",value=makeRcode())
+            })
+            observeEvent(input$picker2,{
+                 updateAceEditor(session,"Rcode",value=makeRcode())
             })
 
             observeEvent(input$helper,{
@@ -374,6 +427,10 @@ mydplyr=function(df,right=NULL){
             })
 
             makeRcode=reactive({
+
+                 input$picker1
+                 input$picker2
+
                 ret=""
                 if(!is.null(input$dfunction)){
                     ret=paste0(ret,input$dfunction,"(")
@@ -388,14 +445,14 @@ mydplyr=function(df,right=NULL){
                             ret=paste0(ret,input$mydata2)
                         }
                     }
-                    if(!is.null(input$column)){
-                        x<-input$column
+                    if(!is.null(selected)){
+                        x<-selected
                         if(str_detect(input$dfunction,"join")) temp=paste0("'",x,"'")
                         else temp<-str_replace(x,"^[0-9]+",paste0("`",x,"`"))
                         choices<-str_c(temp,collapse=",")
                         if(input$dfunction=="arrange"){
                             if(input$desc) {
-                                x<-input$column
+                                x<-selected
                                 temp<-str_replace(x,"^[0-9]+",paste0("`",x,"`"))
                                 temp=paste0("desc(",x,")")
                                 choices<-str_c(temp,collapse=",")
@@ -423,7 +480,7 @@ mydplyr=function(df,right=NULL){
                         }
                         if(length(x)>0){
                             choices<-x %>% paste0("('')") %>% str_c(collapse=",")
-                            if(!is.null(input$column)) ret=paste0(ret,",",choices)
+                            if(!is.null(selected)) ret=paste0(ret,",",choices)
                             else ret=paste0(ret,choices)
                         }
                         if(every) ret=paste0(ret,",everything()")
@@ -433,7 +490,7 @@ mydplyr=function(df,right=NULL){
                         x<-input$window
 
                         choices<-x %>% paste0("()") %>% str_c(collapse=",")
-                        if(!is.null(input$column)) ret=paste0(ret,",",choices)
+                        if(!is.null(selected)) ret=paste0(ret,",",choices)
                         else ret=paste0(ret,choices)
 
                     }
@@ -456,11 +513,11 @@ mydplyr=function(df,right=NULL){
 
 
 
-            output$data1=DT::renderDataTable({
+            output$data1=renderDataTable({
                 get(input$mydata)
 
             })
-            output$data2=DT::renderDataTable({
+            output$data2=renderDataTable({
                 get(input$mydata2)
             })
 
@@ -535,9 +592,9 @@ mydplyr=function(df,right=NULL){
                     htmlOutput("helpFunction2")
                 }
             })
-            output$helpFunction2=renderPrint({
-                help_console(input$dfunction,"html")
-            })
+            # output$helpFunction2=renderPrint({
+            #     help_console(input$dfunction,"html")
+            # })
 
 
 
@@ -581,7 +638,8 @@ mydplyr=function(df,right=NULL){
             output$hint=renderUI({
                 hintFunctions=c("gather","spread","separate","unite","left_join",
                                 "right_join","anti_join","full_join","inner_join",
-                                "semi_join")
+                                "semi_join","filter","select","group_by","mutate","summarise",
+                                "bind_rows","bind_cols")
                 if(!is.null(input$dfunction)){
                     if(input$dfunction %in% hintFunctions){
                         imageOutput("hintfig")
@@ -660,7 +718,7 @@ mydplyr=function(df,right=NULL){
                 temp=sub(")","",temp,fixed=TRUE)
                 if(input$col!=""){
                     if(input$dfunction=="rename"){
-                        temp=paste0(input$dfunction,"(",input$col,"=",input$column)
+                        temp=paste0(input$dfunction,"(",input$col,"=",selected)
                     } else{
                         temp=paste0(temp,",col=",input$col)
                     }
@@ -783,7 +841,8 @@ mydplyr=function(df,right=NULL){
                                     l<-i
 
                                     output[[paste0("plot",l)]]=renderPlot({
-                                        eval(parse(text=plotcodes[l]))
+                                         eval(parse(text=input$wrangling))
+                                         eval(parse(text=plotcodes[l]))
                                     })
 
 
@@ -816,7 +875,7 @@ mydplyr=function(df,right=NULL){
                                                      choices=c("data structure","data table","No thanks"),
                                                      selected="No thanks"))),
                         conditionalPanel(condition="input.showOption2=='data table'",
-                                         DT::dataTableOutput("data2")),
+                                         dataTableOutput("data2")),
                         conditionalPanel(condition="input.showOption2=='data structure'",
                                          verbatimTextOutput("text2"))
                     )

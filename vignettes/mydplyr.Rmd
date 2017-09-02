@@ -1,0 +1,45 @@
+---
+title: "package dplyrAssist"
+author: "Keon-Woong Moon"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,comment = NA)
+```
+
+```
+This package is for teaching and learning data manipulation using the 'dplyr' package.
+With this shiny app, you can learn each steps of data manipulation by clicking your mouse without coding. 
+You can get resultant data(as a tibble) and the code for data manipulation. 
+```
+
+## Usage
+
+```{r,message=FALSE}
+require(tidyverse)
+require(dplyrAssist)
+```
+```{r,echo=TRUE,eval=FALSE}
+result <- mydplyr(iris)
+```
+
+```{r,fig.align='center',out.width="70%",echo=FALSE}
+knitr::include_graphics("http://github.com/cardiomoon/dplyrAssist/man/figures/1.png")
+```
+
+```{r,echo=FALSE}
+result<-iris %>% 
+     group_by(Species) %>%
+     summarise_all(mean)
+attr(result,"code") <- "iris %>%\n group_by(Species) %>%\n summarise_all(mean)"
+```
+```{r}
+result
+cat(attr(result,"code"))
+```
