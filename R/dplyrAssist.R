@@ -8,7 +8,7 @@
 #' @importFrom shiny textInput checkboxInput numericInput conditionalPanel verbatimTextOutput uiOutput h3 actionButton
 #' @importFrom shiny validate need renderPrint updateTextInput updateCheckboxInput reactive renderPlot
 #' @importFrom shiny updateSelectizeInput renderUI htmlOutput tagList updateNumericInput updateSelectInput imageOutput
-#' @importFrom shiny observe br observeEvent renderImage stopApp plotOutput
+#' @importFrom shiny observe br observeEvent renderImage stopApp plotOutput browserViewer runGadget
 #' @importFrom shinyWidgets radioGroupButtons materialSwitch pickerInput
 #' @importFrom shinyAce aceEditor updateAceEditor
 #' @importFrom stringr str_detect str_replace str_c str_replace_all str_split str_replace
@@ -27,23 +27,24 @@
 #' #cat(attr(result,"code"))
 dplyrAssist=function(df=NULL,right=NULL){
 
-
     selectInput3<-function(...,width=100){
         mywidth=paste(width,"px",sep="")
         div(style="display:inline-block;",selectInput(...,width=mywidth))
     }
 
     if(is.null(df)) df="table1"
-    if(any(class(df) %in% c("data.frame","tibble","tbl_df"))) mydata=deparse(substitute(df))
-    else if(class(df) =="character") {
+    if(any(class(df) %in% c("data.frame","tibble","tbl_df"))) {
+         mydata=deparse(substitute(df))
+    } else if(class(df) =="character") {
 
         result<-tryCatch(eval(parse(text=df)),error=function(e) "error")
         if(any(class(result) %in% c("data.frame","tibble","tbl_df"))) mydata=df
         else  return(NULL)
     }
 
-    if(is.null(right)) myright=NULL
-    else {
+    if(is.null(right)) {
+         myright=NULL
+    } else {
     if(any(class(right) %in% c("data.frame","tibble","tbl_df"))) {
         myright=deparse(substitute(right))
     } else if(class(right) =="character") {
@@ -54,7 +55,7 @@ dplyrAssist=function(df=NULL,right=NULL){
     }
     }
 
-    retValue=runApp(list(
+      # retValue=runApp(list(
         ui=fluidPage(
             tags$head(
                 tags$style(HTML("
@@ -67,6 +68,7 @@ dplyrAssist=function(df=NULL,right=NULL){
             # Application title
             titlePanel("Data Wrangling using tidyverse"),
             hr(),
+            #miniContentPanel(
             # h5("      presented by cardiomoon@gmail.com"),
             # hr(),
             # radioGroupButtons("radio1","Please Select Data or",
@@ -160,7 +162,7 @@ dplyrAssist=function(df=NULL,right=NULL){
                 column(6,
                        h3("Data Wrangling R Code"),
                        aceEditor("wrangling",value="",height="200px"),
-                       actionButton("run","Run Code"),
+                       #actionButton("run","Run Code"),
                        actionButton("resetWrangling","Reset"),
                        actionButton("save","Save & Exit")
                 ),
@@ -177,7 +179,8 @@ dplyrAssist=function(df=NULL,right=NULL){
 
             # Sidebar with a slider input for number of bins
 
-                ),
+        #)
+        )
         server=function(input,output,session){
 
             # help_console <- function(topic, format=c("text", "html", "latex", "Rd"),
@@ -905,9 +908,19 @@ dplyrAssist=function(df=NULL,right=NULL){
                 }
             })
 
+            observeEvent(input$done, {
+                 # Return the brushed points. See ?shiny::brushedPoints.
+                 result <- eval(parse(text=input$wrangling))
+                 attr(result,"code") <- input$wrangling
+                 stopApp(result)
+
+            })
+
         }
-                ))
-    retValue
+               #))
+
+     runGadget(ui,server,viewer=browserViewer())
+
 
 }
 

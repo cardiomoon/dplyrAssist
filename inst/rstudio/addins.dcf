@@ -1,0 +1,4 @@
+Name: dplyrAssist
+Description: A Shiny App for Teaching and Learning Data Manipulation Using 'dplyr'
+Binding: dplyrAssist
+Interactive: true

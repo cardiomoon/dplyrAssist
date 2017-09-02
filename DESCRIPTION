@@ -1,9 +1,10 @@
 Package: dplyrAssist
 Type: Package
-Title: A Shiny App for Teaching and Learning Data Manipulation Using 'dplyr'
+Title: RStudio Addin for Teaching and Learning Data Manipulation Using 'dplyr'
 Version: 0.1.0
 Imports:
-    shiny,
+    shiny (>= 0.13),
+    rstudioapi (>= 0.5),
     shinyWidgets,
     shinyAce,
     tidyverse,
@@ -15,11 +16,11 @@ Suggests:
     nycflights13,
     knitr,
     rmarkdown
-Author: Keon-Woong Moon
-Maintainer: Keon-Woong Moon <cardiomoon@gmail.com>
-Description: This package is for teaching and learning data manipulation using the 'dplyr' package.
-    With this shiny app, you can learn each steps of data manipulation by clicking your mouse 
-    without coding. You can get resultant data(as a tibble) and the code for data manipulation. 
+Authors@R: person("Keon-Woong", "Moon", email = "cardiomoon@gmail.com",
+                  role = c("aut", "cre"))
+Description: The 'dplyrAssist' is an RStudio addin for teaching and learning data manipulation using the 'dplyr' package.
+    You can learn each steps of data manipulation by clicking your mouse without coding. 
+    You can get resultant data(as a 'tibble') and the code for data manipulation. 
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
