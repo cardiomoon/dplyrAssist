@@ -1,7 +1,7 @@
-This is the frst submission of the package 'dplyrAssist'
+This is the first submission of the package 'dplyrAssist'
 
 ## Test environments
-* local OS X install, R 3.3.2
+* local OS X install, R 3.4.1
 * win-builder (devel and release)
 
 ## R CMD check results

@@ -18,6 +18,7 @@ Suggests:
     rmarkdown
 Authors@R: person("Keon-Woong", "Moon", email = "cardiomoon@gmail.com",
                   role = c("aut", "cre"))
+URL: https://github.com/cardiomoon/dplyrAssist                  
 Description: The 'dplyrAssist' is an RStudio addin for teaching and learning
     data manipulation using the 'dplyr' package. You can learn each steps of data
     manipulation by clicking your mouse without coding. You can get resultant
