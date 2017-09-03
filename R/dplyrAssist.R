@@ -21,10 +21,13 @@
 #' @examples
 #' library(tidyverse)
 #' library(nycflights13)
-#' #dplyrAssist(band_members,band_instruments)
-#' #dplyrAssist(flights)
-#' #result<-dplyrAssist(iris)
-#' #cat(attr(result,"code"))
+#'
+#' \dontrun{
+#' dplyrAssist(band_members,band_instruments)
+#' dplyrAssist(flights)
+#' result<-dplyrAssist(iris)
+#' cat(attr(result,"code"))
+#' }
 dplyrAssist=function(df=NULL,right=NULL){
 
     selectInput3<-function(...,width=100){

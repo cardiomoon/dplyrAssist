@@ -20,8 +20,11 @@ A shiny app for learn dplyr
 \examples{
 library(tidyverse)
 library(nycflights13)
-#dplyrAssist(band_members,band_instruments)
-#dplyrAssist(flights)
-#result<-dplyrAssist(iris)
-#cat(attr(result,"code"))
+
+\dontrun{
+dplyrAssist(band_members,band_instruments)
+dplyrAssist(flights)
+result<-dplyrAssist(iris)
+cat(attr(result,"code"))
+}
 }
