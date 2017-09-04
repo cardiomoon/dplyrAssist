@@ -9,6 +9,14 @@ codes2kind(vcodes)
 \arguments{
 \item{vcodes}{A character vector to differentiate}
 }
+\value{
+A character vector indicating whether the code returns text or plot
+}
 \description{
 Differentiate the R code
+}
+\examples{
+require(tidyverse)
+temp <-c("iris \%>\% group_by(Species) \%>\% summarize_all(mean)","table1")
+codes2kind(temp)
 }

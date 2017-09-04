@@ -1,33 +1,18 @@
-# require(tidyverse)
-# require(stringr)
-
-#' Check the validity of code
-#'
-#'@param temp A character string to check validity
-checkInValid=function(temp){
-    res=c()
-
-    for(i in 1:length(temp)){
-         result<-c()
-         result<-tryCatch(eval(parse(text=temp[i])),
-                          error=function(e) return("error"),
-                          warning=function(w) return("warning"))
-
-         if(!is.null(result)){
-             if(identical(result,"error")){
-                res=i
-                break
-             }
-         }
-    }
-    res
-}
-
 #' Make valid R code
 #'
-#' @param temp A character vector to make a valid code
+#'@param temp A character vector to make a valid code
+#'@return A valid R codes
+#'@export
+#'@examples
+#'require(tidyverse)
+#'temp <- "iris %>%
+#'group_by(Species) %>%
+#'summarize_all(mean)
+#'
+#'table1"
+#'makeValid(temp)
 makeValid=function(temp){
-   no=checkInValid(temp)
+   no=checkInvalid(temp)
    no
    if(!is.null(no)) {
        result=c()
@@ -44,13 +29,50 @@ makeValid=function(temp){
 }
 
 
+#' Check the validity of code
+#'
+#'@param temp A character string to check validity
+#'@return The position of the first invalid code or NULL
+#'@export
+#'@examples
+#'checkInvalid(c("iris","irisssss"))
+checkInvalid <- function(temp) {
+     res=c()
+
+     for(i in 1:length(temp)){
+          result<-c()
+          result<-tryCatch(eval(parse(text=temp[i])),
+                           error=function(e) return("error"),
+                           warning=function(w) return("warning"))
+
+          if(!is.null(result)){
+               if(identical(result,"error")){
+                    res=i
+                    break
+               }
+          }
+     }
+     res
+}
+
+
+
 #' Make valid R code
 #'
-#' @param codes A character vector to make a valid code
-makeValidCode=function(codes){
+#'@param codes A character vector to make a valid code
+#'@return A valid R codes
+#'@export
+#'@examples
+#'require(tidyverse)
+#'temp <- "iris %>%
+#'group_by(Species) %>%
+#'summarize_all(mean)
+#'
+#'table1"
+#'makeValidCode(temp)
+makeValidCode<-function(codes){
     temp=unlist(stringr::str_split(codes,"\n"))
     temp=temp[nchar(temp)>0]
-    temp
     makeValid(temp)
 }
 
@@ -58,6 +80,12 @@ makeValidCode=function(codes){
 #' Differentiate the R code
 #'
 #' @param vcodes A character vector to differentiate
+#' @return A character vector indicating whether the code returns text or plot
+#' @export
+#' @examples
+#'require(tidyverse)
+#'temp <-c("iris %>% group_by(Species) %>% summarize_all(mean)","table1")
+#'codes2kind(temp)
 codes2kind=function(vcodes){
     result=c()
     if(!is.null(vcodes)) for(i in 1:length(vcodes)){
@@ -78,6 +106,16 @@ codes2kind=function(vcodes){
 #' Detect the valid data
 #'
 #' @param codes A character vector to detect
+#' @return The last data in codes
+#' @export
+#' @examples
+#'require(tidyverse)
+#'temp <- "iris %>%
+#'group_by(Species) %>%
+#'summarize_all(mean)
+#'
+#'table1"
+#'findData(temp)
 findData=function(codes){
     result=NULL
     (vcodes=makeValidCode(codes))

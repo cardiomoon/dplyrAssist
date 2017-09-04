@@ -9,6 +9,18 @@ makeValidCode(codes)
 \arguments{
 \item{codes}{A character vector to make a valid code}
 }
+\value{
+A valid R codes
+}
 \description{
 Make valid R code
+}
+\examples{
+require(tidyverse)
+temp <- "iris \%>\%
+group_by(Species) \%>\%
+summarize_all(mean)
+
+table1"
+makeValidCode(temp)
 }

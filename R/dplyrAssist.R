@@ -8,7 +8,7 @@
 #' @importFrom shiny textInput checkboxInput numericInput conditionalPanel verbatimTextOutput uiOutput h3 actionButton
 #' @importFrom shiny validate need renderPrint updateTextInput updateCheckboxInput reactive renderPlot
 #' @importFrom shiny updateSelectizeInput renderUI htmlOutput tagList updateNumericInput updateSelectInput imageOutput
-#' @importFrom shiny observe br observeEvent renderImage stopApp plotOutput browserViewer runGadget
+#' @importFrom shiny observe br observeEvent renderImage stopApp plotOutput runGadget dialogViewer
 #' @importFrom shinyWidgets radioGroupButtons materialSwitch pickerInput
 #' @importFrom shinyAce aceEditor updateAceEditor
 #' @importFrom stringr str_detect str_replace str_c str_replace_all str_split str_replace
@@ -16,6 +16,8 @@
 #' @importFrom utils capture.output
 #' @importFrom magrittr "%>%"
 #' @importFrom plyr "."
+#' @importFrom rstudioapi getActiveDocumentContext insertText
+#' @importFrom miniUI miniPage gadgetTitleBar miniContentPanel
 #' @export
 #'
 #' @examples
@@ -30,12 +32,29 @@
 #' }
 dplyrAssist=function(df=NULL,right=NULL){
 
-    selectInput3<-function(...,width=100){
+
+     if(!isNamespaceLoaded("tidyverse")){
+          attachNamespace("tidyverse")
+     }
+
+     selectInput3<-function(...,width=100){
         mywidth=paste(width,"px",sep="")
         div(style="display:inline-block;",selectInput(...,width=mywidth))
     }
 
-    if(is.null(df)) df="table1"
+    context <- getActiveDocumentContext()
+
+    # Set the default data to use based on the selection.
+    text <- context$selection[[1]]$text
+    defaultData <- text
+
+    if(is.null(df)) {
+         if(nzchar(defaultData)) {
+              df=defaultData
+         } else {
+              df="table1"
+         }
+    }
     if(any(class(df) %in% c("data.frame","tibble","tbl_df"))) {
          mydata=deparse(substitute(df))
     } else if(class(df) =="character") {
@@ -59,7 +78,7 @@ dplyrAssist=function(df=NULL,right=NULL){
     }
 
       # retValue=runApp(list(
-        ui=fluidPage(
+        ui=miniPage(
             tags$head(
                 tags$style(HTML("
                                 .shiny-output-error-validation {
@@ -69,9 +88,9 @@ dplyrAssist=function(df=NULL,right=NULL){
                 ),
 
             # Application title
-            titlePanel("Data Wrangling using tidyverse"),
-            hr(),
-            #miniContentPanel(
+            gadgetTitleBar("Data Wrangling using tidyverse"),
+
+            miniContentPanel(
             # h5("      presented by cardiomoon@gmail.com"),
             # hr(),
             # radioGroupButtons("radio1","Please Select Data or",
@@ -182,7 +201,7 @@ dplyrAssist=function(df=NULL,right=NULL){
 
             # Sidebar with a slider input for number of bins
 
-        #)
+        )
         )
         server=function(input,output,session){
 
@@ -905,25 +924,34 @@ dplyrAssist=function(df=NULL,right=NULL){
             # })
             observe({
                 if(input$save >0){
-                     result <- eval(parse(text=input$wrangling))
-                     attr(result,"code") <- input$wrangling
-                     stopApp(result)
+                     if(nzchar(defaultData)) {
+                          insertText(text=input$wrangling)
+                          stopApp()
+                     } else{
+                          result <- eval(parse(text=input$wrangling))
+                          attr(result,"code") <- input$wrangling
+                          stopApp(result)
+                     }
                 }
             })
 
             observeEvent(input$done, {
-                 # Return the brushed points. See ?shiny::brushedPoints.
-                 result <- eval(parse(text=input$wrangling))
-                 attr(result,"code") <- input$wrangling
-                 stopApp(result)
+
+                 if(nzchar(defaultData)) {
+                      insertText(text=input$wrangling)
+                      stopApp()
+                 } else{
+                    result <- eval(parse(text=input$wrangling))
+                    attr(result,"code") <- input$wrangling
+                    stopApp(result)
+                 }
 
             })
 
         }
                #))
-
-     runGadget(ui,server,viewer=browserViewer())
-
+        viewer <- dialogViewer("dplyrAssist", width = 1000, height = 800)
+        runGadget(ui, server, viewer = viewer)
 
 }
 
