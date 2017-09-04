@@ -28,7 +28,7 @@ devtools::install_github("cardiomoon/dplyrAssist")
 ```
 
 
-## Usage: As as RStudio Add-in
+## Usage: As an RStudio Add-in
 
 This addin can be used to interactively manipulate a `data.frame` or a `tibble` using `dplyr`.
 The intended way to use this is as follows:
