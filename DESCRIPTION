@@ -1,13 +1,15 @@
 Package: dplyrAssist
 Type: Package
 Title: RStudio Addin for Teaching and Learning Data Manipulation Using 'dplyr'
-Version: 0.1.0
+Version: 0.1.1
 Imports:
     shiny (>= 0.13),
+    miniUI (>= 0.1.1),
     rstudioapi (>= 0.5),
     shinyWidgets,
     shinyAce,
     tidyverse,
+    tidyr,
     stringr,
     magrittr,
     plyr,

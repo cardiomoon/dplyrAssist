@@ -1,5 +1,12 @@
-# dplyrAssist 0.1.0
-====================
-(2017-Sep-2)
+# editData 0.1.1
+==================
+(2017-Oct-16)
 
-* new function "dplyrAssist" added
+* can show hint figures
+
+
+# editData 0.1.0
+====================
+(2017-Sep-21)
+
+* new function "editData" added
