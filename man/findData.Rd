@@ -9,6 +9,18 @@ findData(codes)
 \arguments{
 \item{codes}{A character vector to detect}
 }
+\value{
+The last data in codes
+}
 \description{
 Detect the valid data
+}
+\examples{
+require(tidyverse)
+temp <- "iris \%>\%
+group_by(Species) \%>\%
+summarize_all(mean)
+
+table1"
+findData(temp)
 }

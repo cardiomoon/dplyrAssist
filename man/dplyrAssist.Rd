@@ -15,7 +15,19 @@ dplyrAssist(df = NULL, right = NULL)
 A manipulated tibble or NULL
 }
 \description{
-A shiny app for learn dplyr
+Interactively manipulate a \code{data.frame} or a \code{tibble}. The resulting
+code will be emitted as an R code.
+}
+\details{
+This addin can be used to interactively manipulate a \code{data.frame} or a \code{tibble} using dplyr.
+The intended way to use this is as follows:
+
+1. Highlight a symbol naming a \code{data.frame} or a \code{tibble} in your R session,
+   e.g. \code{mtcars},
+2. Execute this addin, to interactively manipulate it.
+
+When you're done, the code for data manipulation will be emitted
+at the cursor position.
 }
 \examples{
 library(tidyverse)

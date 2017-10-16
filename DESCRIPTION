@@ -19,12 +19,12 @@ Suggests:
     knitr,
     rmarkdown
 Authors@R: person("Keon-Woong", "Moon", email = "cardiomoon@gmail.com",
-                  role = c("aut", "cre"))
-URL: https://github.com/cardiomoon/dplyrAssist                  
-Description: An RStudio addin for teaching and learning data manipulation using the 
-    'dplyr' package. You can learn each steps of data manipulation by clicking your 
-    mouse without coding. You can get resultant data (as a 'tibble') and the code for
-    data manipulation.
+    role = c("aut", "cre"))
+URL: https://github.com/cardiomoon/dplyrAssist
+BugReports: https://github.com/cardiomoon/dplyrAssist/issues
+Description: An RStudio addin for teaching and learning data manipulation using the 'dplyr' package.
+    You can learn each steps of data manipulation by clicking your mouse without coding.
+    You can get resultant data (as a 'tibble') and the code for data manipulation.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
